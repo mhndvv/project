@@ -25,3 +25,20 @@ A Streamlit web application that detects football players in images using YOLO a
 
 ---
 
+
+
+
+
+project/
+├── app.py                     # Main Streamlit app
+├── detection/
+│   └── inference.py           # YOLO detection logic
+├── model/
+│   └── load_model.py          # YOLO model loader
+├── blip_integration/
+│   └── blip.py                # BLIP captioning module
+├── requirements.txt           # Python dependencies
+├── Dockerfile                 # Docker container setup
+└── README.md                  # This file
+
+
