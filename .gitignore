@@ -1,0 +1,8 @@
+echo ".venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+output/
+" > .gitignore
