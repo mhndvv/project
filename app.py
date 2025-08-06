@@ -16,7 +16,6 @@ uploaded_file = st.file_uploader("Upload an image", type=['jpg', 'jpeg', 'png'])
 def cached_load_model():
     return load_model()
 
-
 model = cached_load_model()
 st.success("✅ YOLO model loaded successfully.")
 
@@ -29,19 +28,16 @@ if uploaded_file:
     iou = st.slider("IoU Threshold", 0.0, 1.0, 0.7, 0.01)
 
     if st.button("Detect and Caption"):
-
-        result_img = run_inference(
+        # Updated to unpack two values from run_inference
+        result_img, result = run_inference(
             model, image,
             conf, iou,
             augment=False, agnostic_nms=True, max_det=100, imgsz=1024
         )
-        st.image(result_img, caption="Detected Players")
 
+        # Display detection image (NumPy RGB) as PIL for Streamlit
+        st.image(Image.fromarray(result_img), caption="Detected Players")
 
-        if isinstance(result_img, np.ndarray):
-            result_pil = Image.fromarray(result_img)
-        else:
-            result_pil = result_img
-
-        caption = generate_caption(result_pil)
+        # Generate caption from the RGB PIL image
+        caption = generate_caption(Image.fromarray(result_img))
         st.success(f" Caption: {caption}")

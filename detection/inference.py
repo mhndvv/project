@@ -1,46 +1,29 @@
+import numpy as np
+from PIL import Image
+
 def run_inference(model, img, conf, iou, augment, agnostic_nms, max_det, imgsz):
-    """
-    Run object detection on the image.
 
-    Parameters
-    ----------
-    model : YOLO
-        The loaded YOLO model.
-    img : PIL.Image
-        The image to run detection on.
-    conf : float
-        Confidence threshold.
-    iou : float
-        Intersection over Union threshold.
-    augment : bool
-        Whether to apply data augmentation.
-    agnostic_nms : bool
-        Whether to use class-agnostic NMS.
-    max_det : int
-        Maximum number of detections.
-    imgsz : int
-        Image size to use for inference.
 
-    Returns
-    -------
-    result_img : np.ndarray
-        The annotated image with detections drawn.
+    if isinstance(img, Image.Image):
+        img_np = np.array(img)
+    else:
+        img_np = img
 
-    """
     results = model(
-        img,
+        img_np,
         conf=conf,
         iou=iou,
         augment=augment,
         agnostic_nms=agnostic_nms,
         max_det=max_det,
         imgsz=imgsz,
-        classes=None
     )
 
     result = results[0]
-    result_img = result.plot()
 
+    result_img_bgr = result.plot()
 
+  
+    result_img_rgb = result_img_bgr[:, :, ::-1]
 
-    return result_img
+    return result_img_rgb, result
