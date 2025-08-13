@@ -1,8 +1,10 @@
 streamlit
+ultralytics
+huggingface_hub
+Pillow
+numpy
 torch
 torchvision
 transformers
-pillow
 requests
 jinja2==3.1.4
-ultralytics
