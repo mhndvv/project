@@ -1,0 +1,11 @@
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.git
+.gitignore
+*.ipynb
+model/*.pt
+face_detection/*.pt
+.env

@@ -6,13 +6,54 @@ import os
 
 @st.cache_resource
 def load_face_model():
+    """
+    Load the YOLO face detection model.
+
+    Returns
+    -------
+    YOLO
+        The loaded YOLO model if available.
+    None
+        If the model file is missing.
+    """
     model_path = "face_detection/model.pt"
+
     if not os.path.exists(model_path):
-        st.error(f"Model file not found at {model_path}. Please download it manually.")
-        return None
+        st.error(
+            f"❌ Face detection model not found at: `{model_path}`\n"
+            f"➡ Please place the model file in the correct folder."
+        )
+        st.stop()  # prevents rest of the app from running
+
     return YOLO(model_path)
 
 def run_face_detection():
+    """
+    Launch a Streamlit interface for face detection on uploaded images.
+
+    The function loads a YOLO face detection model, allows the user to upload
+    an image (JPG/PNG), runs inference to detect faces, and displays both the
+    uploaded image and the annotated detection result with bounding boxes.
+
+    Parameters
+    ----------
+    None
+        This function takes no input parameters directly. All inputs come
+        interactively from the Streamlit UI.
+
+    Returns
+    -------
+    None
+        The function outputs results directly to the Streamlit app interface
+        (uploaded image preview, detection results).
+
+    Raises
+    ------
+    FileNotFoundError
+        If the face detection model file is missing when `load_face_model()` is called.
+    RuntimeError
+        If the YOLO model fails during prediction.
+    """
     st.title("Face Detection")
 
     model = load_face_model()
@@ -34,3 +75,4 @@ def run_face_detection():
         annotated_img = results[0].plot()
 
         st.image(annotated_img, caption="Face Detection Result", use_column_width=True)
+
