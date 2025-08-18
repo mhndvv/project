@@ -113,41 +113,62 @@ def run_inference_streamlit():
             except Exception as e:
                 st.error(f"Inference failed: {e}")
 
+
 def run_face_detection():
     """
-    Run a Streamlit app for face detection using a YOLO model.
-    Allows users to upload an image, runs YOLO face detection,
-    and displays both the original and annotated images.
+    Run the Streamlit UI for face detection.
+
+    Shows an image uploader, loads a cached YOLO face model, runs
+    prediction on the uploaded image, and displays the annotated result.
+
+    Parameters
+    ----------
+    None
 
     Returns
     -------
     None
-        Displays results directly in the Streamlit interface.
+        Renders results directly in the Streamlit app.
+
+    Raises
+    ------
+    RuntimeError
+        If the face model fails to load or inference fails.
+    ValueError
+        If the uploaded file is not a valid image.
     """
     st.title("Face Detection")
 
     model = load_face_model()
     if model is None:
-        return  # stop if model not loaded
+        st.error("Face model not loaded. Make sure weights exist at the expected path.")
+        return
 
-    uploaded_file = st.file_uploader("Upload an image for face detection", type=['jpg', 'jpeg', 'png'])
-    if uploaded_file:
+    uploaded_file = st.file_uploader(
+        "Upload an image for face detection",
+        type=["jpg", "jpeg", "png"]
+    )
+    if not uploaded_file:
+        return
+
+    try:
         image = Image.open(uploaded_file).convert("RGB")
-        st.image(image, caption="Uploaded Image", use_column_width=True)
+    except Exception as e:
+        st.error(f"Could not open image: {e}")
+        return
 
-        # Convert PIL image to NumPy array for model
+    st.image(image, caption="Uploaded Image", use_container_width=True)
+
+    # Run inference
+    try:
         image_np = np.array(image)
-
-        # Run YOLO prediction
         results = model.predict(image_np)
+        annotated_img = results[0].plot()
+    except Exception as e:
+        st.error(f"Inference failed: {e}")
+        return
 
-        # Handle both possible return types
-        if isinstance(results, list):  
-            annotated_img = results[0].plot()
-        else:  
-            annotated_img = results.plot()
-
-        st.image(annotated_img, caption="Face Detection Result", use_column_width=True)
+    st.image(annotated_img, caption="Face Detection Result", use_container_width=True)
 
 
 
